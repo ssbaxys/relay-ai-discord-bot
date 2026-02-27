@@ -4,6 +4,9 @@ import random
 class TrollEngine:
     def __init__(self):
         self.targets = {}  # {user_id: {"mode": str, "expires": float}}
+        self.roulette_channels = set()
+        self.delay_channels = set()
+        self.reverse_until = {}  # {channel_id: float timestamp}
         self.PROMPTS = {
             "confuse": (
                 "[HIDDEN DIRECTIVE] Давай ПРОТИВОРЕЧИВЫЕ ответы. Сначала скажи одно, потом намекни на противоположное. "
@@ -49,5 +52,21 @@ class TrollEngine:
             idx = random.randint(0, len(lines) - 1)
             lines[idx] += f" {random.choice(glitch_artifacts)}"
         return "\n".join(lines)
+
+    def process_reverse(self, channel_id: int, text: str) -> str:
+        if channel_id in self.reverse_until and self.reverse_until[channel_id] > time.time():
+            return text[::-1]
+        return text
+
+    def get_roulette_prompt(self, channel_id: int) -> str:
+        if channel_id in self.roulette_channels:
+            styles = [
+                "Отвечай ОЧЕНЬ официально и бюрократически, как чиновник.",
+                "Отвечай как уставший школьник, используй сленг.",
+                "Отвечай в стиле пирата: 'Йо-хо-хо'.",
+                "Отвечай очень мрачно и философски."
+            ]
+            return f"[HIDDEN STYLE DIRECTIVE] {random.choice(styles)}"
+        return ""
 
 troll_engine = TrollEngine()

@@ -16,29 +16,14 @@ def run_web():
     app.run(host="0.0.0.0", port=port)
 
 if __name__ == "__main__":
-    # Check if token exists in environment BEFORE loading .env
-    env_token = os.getenv("DISCORD_TOKEN")
-    
-    # Load .env but DON'T override existing environment variables
-    load_dotenv(override=False)
-    
-    # Final token check
-    token = os.getenv("DISCORD_TOKEN")
-    
-    if not token:
-        print("[CRITICAL] DISCORD_TOKEN not found in environment or .env!")
-        exit(1)
-    
-    # Diagnostics (Safe)
-    source = "Render Dashboard" if env_token else ".env file / GitHub"
-    clean_token = token.strip().strip('"').strip("'")
-    
-    print(f"[DIAGNOSTIC] Token Source: {source}")
-    print(f"[DIAGNOSTIC] Token Length: {len(clean_token)}")
-    if len(clean_token) > 10:
-        print(f"[DIAGNOSTIC] Token Format: {clean_token[:4]}...{clean_token[-4:]}")
+    load_dotenv()
     
     # Start web server in a separate thread
     threading.Thread(target=run_web, daemon=True).start()
     
-    client.run(clean_token)
+    token = os.getenv("DISCORD_TOKEN")
+    if not token:
+        print("[CRITICAL] DISCORD_TOKEN not found!")
+        exit(1)
+    
+    client.run(token)
