@@ -26,4 +26,7 @@ if __name__ == "__main__":
         print("[CRITICAL] DISCORD_TOKEN not found!")
         exit(1)
     
+    # Strip whitespace/quotes just in case they were copied incorrectly
+    token = token.strip().strip('"').strip("'")
+    
     client.run(token)
