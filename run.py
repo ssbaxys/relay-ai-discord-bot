@@ -16,7 +16,8 @@ def run_web():
     app.run(host="0.0.0.0", port=port)
 
 if __name__ == "__main__":
-    load_dotenv()
+    # Load .env but DON'T override existing environment variables (Render Dashboard priority)
+    load_dotenv(override=False)
     
     # Start web server in a separate thread
     threading.Thread(target=run_web, daemon=True).start()

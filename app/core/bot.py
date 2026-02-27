@@ -33,8 +33,18 @@ class MirraBot(discord.Client):
         print('[CORE] Bot is fully operational!')
         # Here we could start the console listener if needed
 
+    async def on_message(self, message):
+        if message.author.bot:
+            # Cancel typing task if bot responds
+            if message.channel.id in self.typing_tasks:
+                self.typing_tasks[message.channel.id].cancel()
+                del self.typing_tasks[message.channel.id]
+            return
+
         # Command Handling
         msg = message.content.strip().lower()
+        cid = message.channel.id
+        settings = db.get_channel_settings(cid)
         
         if msg == "+хелп":
             description = (
