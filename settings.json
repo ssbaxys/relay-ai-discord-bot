@@ -1,0 +1,295 @@
+{
+    "channels": {
+        "1466318763136782436": {
+            "enabled": true,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1466428888749052005": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1466311915096641701": {
+            "enabled": true,
+            "model": "ssbaxys-realtime-1",
+            "deepwork": true
+        },
+        "633897002085646346": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1425500303779696660": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "788053162527424563": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1460633624385683507": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1460064102016876758": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1457969814839754762": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1450722696030847018": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1468642691892908052": {
+            "enabled": true,
+            "model": "ssbaxys-realtime-1",
+            "deepwork": true,
+            "modules": {
+                "DeepWork": true,
+                "Real-time Reading": false,
+                "Visual Vision": false,
+                "Memory Core": false,
+                "Auto-Correction": false,
+                "Voice Synthesis": false,
+                "Code Execution": false,
+                "Web Search": false
+            }
+        },
+        "892885669330948109": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1468750219821715507": {
+            "enabled": true,
+            "model": "Mistral Large",
+            "deepwork": true,
+            "modules": {
+                "DeepWork": true,
+                "Real-time Reading": false,
+                "Visual Vision": false,
+                "Memory Core": false,
+                "Auto-Correction": false,
+                "Voice Synthesis": false,
+                "Code Execution": false,
+                "Web Search": false
+            }
+        },
+        "1468746156577259734": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1466119533856030780": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1460655360602931358": {
+            "enabled": false,
+            "model": "ssbaxys-realtime-1",
+            "deepwork": true
+        },
+        "1468846985351004279": {
+            "enabled": true,
+            "model": "Mistral Large",
+            "deepwork": true,
+            "modules": {
+                "DeepWork": true,
+                "Real-time Reading": false,
+                "Visual Vision": false,
+                "Memory Core": false,
+                "Auto-Correction": false,
+                "Voice Synthesis": false,
+                "Code Execution": false,
+                "Web Search": false
+            }
+        },
+        "1199658063737659427": {
+            "enabled": true,
+            "model": "Mistral Large",
+            "deepwork": true,
+            "modules": {
+                "DeepWork": true,
+                "Real-time Reading": false,
+                "Visual Vision": false,
+                "Memory Core": false,
+                "Auto-Correction": false,
+                "Voice Synthesis": false,
+                "Code Execution": false,
+                "Web Search": false
+            }
+        },
+        "1468878501242339401": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1459249617819664444": {
+            "enabled": true,
+            "model": "Mistral Large",
+            "deepwork": true,
+            "modules": {
+                "DeepWork": true,
+                "Real-time Reading": false,
+                "Visual Vision": false,
+                "Memory Core": false,
+                "Auto-Correction": false,
+                "Voice Synthesis": false,
+                "Code Execution": false,
+                "Web Search": false
+            }
+        },
+        "1402024958460166165": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1459886828122407054": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1468748507908411464": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1468914861651001449": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1468918004837384294": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1460912862330359852": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1418563416066490379": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1468161933017612309": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1418563416066490380": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1460634823801700534": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1465684875804938341": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1468975456538857563": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1368020198535467049": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1467871123445121190": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1474036613213327654": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1460631652932915387": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1460633991060394076": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1476635224086548543": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1467545296044294449": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1470058788387164318": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        },
+        "1476973880433311804": {
+            "enabled": true,
+            "model": "ssbaxys-realtime-1",
+            "deepwork": true,
+            "modules": {
+                "DeepWork": true,
+                "Real-time Reading": false,
+                "Visual Vision": false,
+                "Memory Core": false,
+                "Auto-Correction": false,
+                "Voice Synthesis": false,
+                "Code Execution": false,
+                "Web Search": false
+            }
+        },
+        "1460915088876896359": {
+            "enabled": false,
+            "model": "Mistral Large",
+            "deepwork": true
+        }
+    },
+    "global": {
+        "blocked_models": [],
+        "deepwork_allowed": true,
+        "error_log": {
+            "2026-02-27": 13
+        },
+        "hive_mind_instructions": [],
+        "ssbaxys_manual_mode": false,
+        "creator_mode": false,
+        "log_channel_id": null,
+        "modules": {
+            "DeepWork": false,
+            "Real-time Reading": false,
+            "Visual Vision": false,
+            "Memory Core": false,
+            "Auto-Correction": false,
+            "Voice Synthesis": false,
+            "Code Execution": false,
+            "Web Search": false
+        }
+    }
+}
