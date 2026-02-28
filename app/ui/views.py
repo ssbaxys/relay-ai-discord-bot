@@ -26,9 +26,9 @@ class PremiumModelView(View):
 
     def create_callback(self, model_name):
         async def callback(interaction: discord.Interaction):
-            settings = db.get_channel_settings(interaction.channel_id)
+            settings = await db.get_channel_settings(interaction.channel_id)
             settings["model"] = model_name
-            db.save_settings()
+            await db.save_settings()
             self.update_buttons(model_name)
             
             embed = create_premium_embed(
@@ -40,14 +40,13 @@ class PremiumModelView(View):
         return callback
 
 class PremiumSettingsView(View):
-    def __init__(self, channel_id):
+    def __init__(self, settings, channel_id):
         super().__init__(timeout=None)
         self.channel_id = channel_id
-        self.update_buttons()
+        self.update_buttons(settings)
 
-    def update_buttons(self):
+    def update_buttons(self, settings):
         self.clear_items()
-        settings = db.get_channel_settings(self.channel_id)
         channel_modules = settings.get("modules", {})
         global_modules = db.global_settings.get("modules", {})
 
@@ -70,11 +69,11 @@ class PremiumSettingsView(View):
 
     def create_toggle_callback(self, mod_name):
         async def callback(interaction: discord.Interaction):
-            settings = db.get_channel_settings(interaction.channel_id)
+            settings = await db.get_channel_settings(interaction.channel_id)
             if "modules" not in settings: settings["modules"] = {}
             settings["modules"][mod_name] = not settings["modules"].get(mod_name, False)
-            db.save_settings()
+            await db.save_settings()
             
-            self.update_buttons()
+            self.update_buttons(settings)
             await interaction.response.edit_message(view=self)
         return callback

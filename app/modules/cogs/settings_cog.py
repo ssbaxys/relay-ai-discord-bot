@@ -38,7 +38,7 @@ class AdminSettingsCog(commands.Cog):
 
         if msg == "+статус":
             embed = create_premium_embed("📊 Статус Системы", f"**Агент:** Antigravity v3.0 (Modular)\n**Модель:** {settings['model']}\n**Канал:** {'✅ Активен' if settings['enabled'] else '❌ Выключен'}")
-            await message.channel.send(embed=create_premium_embed("📊 Статус Системы", f"**Агент:** Antigravity v3.0 (Modular)\n**Модель:** {settings['model']}\n**Канал:** {'✅ Активен' if settings['enabled'] else '❌ Выключен'}"))
+            await message.channel.send(embed=embed)
             return
 
         if msg == "+модели":
@@ -47,7 +47,7 @@ class AdminSettingsCog(commands.Cog):
             return
 
         if msg == "+настройки":
-            view = PremiumSettingsView(cid)
+            view = PremiumSettingsView(settings, cid)
             await message.channel.send(embed=create_premium_embed("⚙️ Параметры Агента", "Управление активными модулями нейросети:"), view=view)
             return
 

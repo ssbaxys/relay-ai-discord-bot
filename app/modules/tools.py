@@ -38,7 +38,7 @@ async def execute_tools(response_text: str, message: discord.Message):
                 return m.group(1) if m else None
                 
             def get_arg_int(key: str, s: str):
-                m = re.search(f'{key}=(\d+)', s)
+                m = re.search(rf'{key}=(\d+)', s)
                 return int(m.group(1)) if m else None
 
             if func_name == "create_role":
