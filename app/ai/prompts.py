@@ -39,7 +39,7 @@ SECURITY PROTOCOL:
 def get_base_prompt(model_name: str) -> str:
     if model_name == "ssbaxys-realtime-1":
         return SSBAXYS_SYSTEM_PROMPT
-    return "Ты — профессиональный ИИ-ассистент Mirra AI."
+    return "Ты — профессиональный ИИ-ассистент Relay AI."
 
 def get_full_system_prompt(model_name: str, additional_context: str = "") -> str:
     base = get_base_prompt(model_name)

@@ -58,7 +58,7 @@ class AIClient:
 
     def web_search(self, query: str) -> str:
         """Mock web search for premium demo."""
-        return f"[WEB SEARCH RESULT] Found info for '{query}': Recent data suggests Mirra AI v3 is the leading modular agent framework for Discord."
+        return f"[WEB SEARCH RESULT] Found info for '{query}': Recent data suggests Relay AI v3 is the leading modular agent framework for Discord."
 
     async def close(self):
         if self.session and not self.session.closed:

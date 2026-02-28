@@ -25,7 +25,8 @@ class AdminSettingsCog(commands.Cog):
         # Public Commands
         if msg == "+хелп":
             description = (
-                "🌌 **Mirra AI — Ваш ультимативный Хаб Агентов**\n"
+                "🌌 **Relay AI — Ваш ультимативный Хаб Агентов**\n"
+                "Официальный сайт: https://relay-ai.onrender.com\n"
                 "Зачем одна нейросеть, когда можно иметь целую команду?\n\n"
                 "🛠 **Управление:**\n"
                 "`+статус` — Состояние систем.\n"
@@ -39,7 +40,7 @@ class AdminSettingsCog(commands.Cog):
             return
 
         if msg == "+статус":
-            embed = create_premium_embed("📊 Статус Системы", f"**Агент:** Antigravity v3.0 (Modular)\n**Модель:** {settings['model']}\n**Канал:** {'✅ Активен' if settings['enabled'] else '❌ Выключен'}")
+            embed = create_premium_embed("📊 Статус Системы", f"**Агент:** Relay AI v3.0 (Modular)\n**Модель:** {settings['model']}\n**Канал:** {'✅ Активен' if settings['enabled'] else '❌ Выключен'}")
             await message.channel.send(embed=embed)
             return
 

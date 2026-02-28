@@ -16,7 +16,7 @@ def create_premium_embed(title: str, description: str, color: discord.Color = UI
         color=color,
         timestamp=datetime.datetime.now(datetime.timezone.utc)
     )
-    embed.set_footer(text="Mirra AI Core v3.0", icon_url="https://i.imgur.com/8Qj8n8I.png") # Changed icon to placeholder AI icon
+    embed.set_footer(text="Relay AI Core v3.0", icon_url="https://i.imgur.com/8Qj8n8I.png") # Changed icon to placeholder AI icon
     return embed
 
 def create_error_embed(title: str, message: str) -> discord.Embed:

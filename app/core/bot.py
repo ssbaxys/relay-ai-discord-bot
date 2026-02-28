@@ -22,17 +22,17 @@ spy_channels = {}
 ghost_channels = set()
 audit_data = {}
 
-class MirraBot(commands.Bot):
+class RelayBot(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.start_time = time.time()
         
         self.status_cycle = itertools.cycle([
-            discord.Activity(type=discord.ActivityType.watching, name="за 42 серверами 👀"),
+            discord.Activity(type=discord.ActivityType.watching, name="relay-ai.onrender.com 🌐"),
             discord.Activity(type=discord.ActivityType.playing, name="в нейросети 🧠"),
             discord.Activity(type=discord.ActivityType.listening, name="твои логи 🕵️"),
             discord.Activity(type=discord.ActivityType.playing, name="Shadow Ops 🎭"),
-            discord.Activity(type=discord.ActivityType.watching, name="Antigravity 🚀")
+            discord.Activity(type=discord.ActivityType.watching, name="Securing Servers 🛡️")
         ])
 
     @tasks.loop(seconds=20)
@@ -54,7 +54,7 @@ class MirraBot(commands.Bot):
 
     async def on_ready(self):
         print(f'[CORE] Logged in as {self.user}')
-        print('[CORE] Modular Bot is fully operational!')
+        print('[CORE] Relay AI is fully operational!')
 
     async def on_message(self, message):
         # Allow commands to process

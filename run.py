@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Mirra AI Bot is running!"
+    return "Relay AI Bot is running!"
 
 def run_web():
     port = int(os.environ.get("PORT", 10000))
