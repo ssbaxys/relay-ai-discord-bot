@@ -168,4 +168,4 @@ class RelayBot(commands.Bot):
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
-client = MirraBot(command_prefix="+", intents=intents)
+client = RelayBot(command_prefix="+", intents=intents)
