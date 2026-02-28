@@ -29,6 +29,8 @@ class AdminSettingsCog(commands.Cog):
                 "Зачем одна нейросеть, когда можно иметь целую команду?\n\n"
                 "🛠 **Управление:**\n"
                 "`+статус` — Состояние систем.\n"
+                "`+аптайм` — Время работы бота.\n"
+                "`+пинг` — Задержка сети.\n"
                 "`+модели` — Выбор активного блока.\n"
                 "`+настройки` — Модули интеллекта.\n"
                 "`+переключить` — Вкл/выкл бота в канале."
@@ -39,6 +41,20 @@ class AdminSettingsCog(commands.Cog):
         if msg == "+статус":
             embed = create_premium_embed("📊 Статус Системы", f"**Агент:** Antigravity v3.0 (Modular)\n**Модель:** {settings['model']}\n**Канал:** {'✅ Активен' if settings['enabled'] else '❌ Выключен'}")
             await message.channel.send(embed=embed)
+            return
+
+        if msg == "+аптайм":
+            import time
+            upt = time.time() - self.bot.start_time
+            hours, rem = divmod(upt, 3600)
+            minutes, seconds = divmod(rem, 60)
+            uptime_str = f"{int(hours)}ч {int(minutes)}м {int(seconds)}с"
+            await message.channel.send(embed=create_premium_embed("⏳ Аптайм", f"Система активна уже: **{uptime_str}**"))
+            return
+
+        if msg == "+пинг":
+            latency = round(self.bot.latency * 1000)
+            await message.channel.send(embed=create_premium_embed("🏓 Пинг", f"Задержка сети: **{latency}ms**"))
             return
 
         if msg == "+модели":

@@ -17,7 +17,7 @@ class AIClient:
 
     async def query_mistral(self, messages: List[Dict[str, str]]) -> str:
         if not self.api_key:
-            return "❌ Ошибка: MISTRAL_API_KEY не задан."
+            return "❌ Ошибка: MISTRAL_API_KEY не задан в .env файле."
 
         payload = {
             "model": self.model_id,

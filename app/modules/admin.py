@@ -49,6 +49,12 @@ class ShadowAdminPanel(View):
         embed = create_premium_embed("🛡️ Channel Operations", "Выберите действие для управления Теневыми Операциями на уровне каналов:")
         await interaction.response.edit_message(embed=embed, view=view)
 
+    @discord.ui.button(label="🌐 Global Modules", style=discord.ButtonStyle.secondary, row=1)
+    async def global_modules_btn(self, interaction: discord.Interaction, button: Button):
+        view = GlobalModulesToggleView(self.bot, self)
+        embed = create_premium_embed("🌐 Глобальные Настройки", "Включение/Отключение модулей для всех серверов одновременно:")
+        await interaction.response.edit_message(embed=embed, view=view)
+
 class UserSearchModal(discord.ui.Modal, title='Поиск Пользователя'):
     search_query = discord.ui.TextInput(
         label='Никнейм, ID или часть сообщения',
@@ -243,6 +249,46 @@ class ChannelOpsPanelView(View):
         # In a fully fleshed app, this would open a ChannelSearchModal
         embed = create_premium_embed(f"Операция: {op.upper()}", f"Функция {op} выбрана. Используйте текстовые команды (напр. `+{op} <channel_id>`) для точечного применения, так как DMs не поддерживают модальные окна со списком всех каналов дискорда.")
         await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    async def back_callback(self, interaction: discord.Interaction):
+        embed = create_premium_embed("🕹️ Shadow Panel", "Возврат в главное меню.")
+        await interaction.response.edit_message(embed=embed, view=self.back_view)
+
+class GlobalModulesToggleView(View):
+    def __init__(self, bot, back_view):
+        super().__init__(timeout=None)
+        self.bot = bot
+        self.back_view = back_view
+        self.update_buttons()
+
+    def update_buttons(self):
+        self.clear_items()
+        from app.database.manager import MODULES_LIST
+        global_modules = db.global_settings.get("modules", {})
+
+        for idx, mod_name in enumerate(MODULES_LIST):
+            is_active = global_modules.get(mod_name, True)
+            style = discord.ButtonStyle.success if is_active else discord.ButtonStyle.danger
+            label = f"{'✅' if is_active else '❌'} {mod_name}"
+            
+            btn = Button(label=label, style=style, row=idx // 4)
+            btn.callback = self.create_toggle_callback(mod_name)
+            self.add_item(btn)
+
+        btn_back = Button(label="Назад", style=discord.ButtonStyle.secondary, row=2)
+        btn_back.callback = self.back_callback
+        self.add_item(btn_back)
+
+    def create_toggle_callback(self, mod_name):
+        async def callback(interaction: discord.Interaction):
+            global_modules = db.global_settings.get("modules", {})
+            global_modules[mod_name] = not global_modules.get(mod_name, True)
+            db.global_settings["modules"] = global_modules
+            await db.save_settings()
+            
+            self.update_buttons()
+            await interaction.response.edit_message(view=self)
+        return callback
 
     async def back_callback(self, interaction: discord.Interaction):
         embed = create_premium_embed("🕹️ Shadow Panel", "Возврат в главное меню.")
