@@ -11,9 +11,9 @@ from app.modules.troll import troll_engine
 OWNER_ID = 1101392990133551224
 MODELS = {
     "Mistral Large": {"id": "mistral-large-latest", "real": True},
-    "Claude Opus 4.5": {"id": "claude-opus-4.5-fake", "real": False},
+    "Claude Opus 4.6": {"id": "claude-opus-4.6-fake", "real": False},
     "GPT-5.2 Codex": {"id": "gpt-5.2-fake", "real": False},
-    "Gemini 3 Pro": {"id": "gemini-3-pro-fake", "real": False},
+    "Gemini 3.1 Pro": {"id": "gemini-3.1-pro-fake", "real": False},
     "ssbaxys-realtime-1": {"id": "mistral-large-latest", "real": True}
 }
 
