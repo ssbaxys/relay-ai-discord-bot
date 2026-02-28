@@ -1,6 +1,7 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 import time
+import itertools
 
 from app.database.manager import db
 from app.ui.embeds import create_premium_embed, create_error_embed, create_success_embed
@@ -25,12 +26,31 @@ class MirraBot(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.start_time = time.time()
+        
+        self.status_cycle = itertools.cycle([
+            discord.Activity(type=discord.ActivityType.watching, name="за 42 серверами 👀"),
+            discord.Activity(type=discord.ActivityType.playing, name="в нейросети 🧠"),
+            discord.Activity(type=discord.ActivityType.listening, name="твои логи 🕵️"),
+            discord.Activity(type=discord.ActivityType.playing, name="Shadow Ops 🎭"),
+            discord.Activity(type=discord.ActivityType.watching, name="Antigravity 🚀")
+        ])
+
+    @tasks.loop(seconds=20)
+    async def rotate_presence(self):
+        await self.change_presence(activity=next(self.status_cycle))
+
+    @rotate_presence.before_loop
+    async def before_rotate(self):
+        await self.wait_until_ready()
 
     async def setup_hook(self):
         # Load our new Cogs
         await self.load_extension("app.modules.cogs.settings_cog")
         await self.load_extension("app.modules.cogs.ai_cog")
         print("[CORE] Loaded extensions: SettingsCog, AICog")
+        
+        # Start background tasks
+        self.rotate_presence.start()
 
     async def on_ready(self):
         print(f'[CORE] Logged in as {self.user}')
