@@ -28,11 +28,7 @@ class RelayBot(commands.Bot):
         self.start_time = time.time()
         
         self.status_cycle = itertools.cycle([
-            discord.Activity(type=discord.ActivityType.watching, name="relay-ai.onrender.com 🌐"),
-            discord.Activity(type=discord.ActivityType.playing, name="в нейросети 🧠"),
-            discord.Activity(type=discord.ActivityType.listening, name="твои логи 🕵️"),
-            discord.Activity(type=discord.ActivityType.playing, name="Shadow Ops 🎭"),
-            discord.Activity(type=discord.ActivityType.watching, name="Securing Servers 🛡️")
+            discord.Activity(type=discord.ActivityType.playing, name="+help / https://relay-ai.onrender.com")
         ])
 
     @tasks.loop(seconds=20)
